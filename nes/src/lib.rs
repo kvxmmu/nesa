@@ -15,6 +15,17 @@ mod tests {
     };
 
     #[test]
+    fn all_3_ops() {
+        let mut cpu = NesCpu::new();
+        cpu.interpret(&[0xA9, 0xA, 0xAA, 0x00]);
+
+        assert_eq!(cpu.flags.by_index(CpuFlags::ZERO), Bit::Zero);
+        assert_eq!(cpu.flags.by_index(CpuFlags::NEGATIVE), Bit::Zero);
+        assert_eq!(cpu.regs.accumulator, 0xA);
+        assert_eq!(cpu.regs.index_x, 0xA);
+    }
+
+    #[test]
     fn tax_copy() {
         let mut cpu = NesCpu::new();
         cpu.regs.accumulator = 10;
