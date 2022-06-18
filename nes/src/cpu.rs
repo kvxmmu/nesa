@@ -3,8 +3,28 @@ use {
         mem::*,
         cpu_flags::*,
         cpu_registers::*,
-    }
+    },
 };
+
+macro_rules! zero_predicate {
+    ($by:expr) => {
+        |_| if $by == 0 {
+            Bit::One
+        } else {
+            Bit::Zero
+        }
+    };
+}
+
+macro_rules! neg_predicate {
+    ($by:expr) => {
+        |_| if ($by & (1 << 7)) != 0 {
+            Bit::One
+        } else {
+            Bit::Zero
+        }
+    };
+}
 
 pub struct NesCpu {
     pub mem: MemoryMapping,
@@ -24,29 +44,19 @@ impl NesCpu {
             self.regs.inc_pc();
 
             match opcode {
+                // LDA
                 0xA9 => {
                     let acc = program[self.regs.program_counter as usize];
                     self.regs.inc_pc();
 
                     self.regs.accumulator = acc;
-                    dbg!(acc);
+                    self.modify_result(acc as u16);
+                }
 
-                    self.flags.modify_by_predicate(
-                        CpuFlags::ZERO,
-                        |_| if self.regs.accumulator == 0 {
-                            Bit::One
-                        } else {
-                            Bit::Zero
-                        }
-                    );
-                    self.flags.modify_by_predicate(
-                        CpuFlags::NEGATIVE,
-                        |_| if self.regs.accumulator & (1 << 7) != 0 {
-                            Bit::One
-                        } else {
-                            Bit::Zero
-                        }
-                    );
+                // TAX
+                0xAA => {
+                    self.regs.index_x = self.regs.accumulator;
+                    self.modify_result(self.regs.accumulator as u16);
                 }
 
                 0x00 => {
@@ -56,6 +66,11 @@ impl NesCpu {
                 _ => panic!("Illegal instruction (0x{:x})", opcode)
             }
         }
+    }
+
+    fn modify_result(&mut self, by: u16) {
+        self.flags.modify_by_predicate(CpuFlags::ZERO, zero_predicate!(by));
+        self.flags.modify_by_predicate(CpuFlags::NEGATIVE, neg_predicate!(by));
     }
 
     pub fn new() -> Self {
