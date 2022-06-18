@@ -11,29 +11,35 @@ impl MemoryMapping {
         &self.inner
     }
 
-    /// Get program rom span access
-    pub fn program_rom_span(&mut self) -> &mut [u8] {
-        &mut self.inner[0x8001..=0xFFFF]
+    pub fn read(&self, addr: u16) -> u8 {
+        self.inner[addr as usize]
     }
 
-    /// Get save span
-    pub fn save_span(&mut self) -> &mut [u8] {
-        &mut self.inner[0x6001..=0x8000]
+    pub fn write(&mut self, addr: u16, value: u8) -> u8 {
+        self.inner[addr as usize] = value;
+        value
     }
 
-    /// Get Expansion ROM Span
-    pub fn expansion_rom_span(&mut self) -> &mut [u8] {
-        &mut self.inner[0x4021..=0x6000]
+    pub fn read_u16(&self, addr: u16) -> u16 {
+        let lhs = self.read(addr);
+        let rhs = self.read(addr + 1);
+
+        ((rhs as u16) << 8) | (lhs as u16)
     }
 
-    /// Get IO Memory span
-    pub fn io_span(&mut self) -> &mut [u8] {
-        &mut self.inner[0x2001..=0x4020]
+    pub fn write_u16(&mut self, addr: u16, value: u16) -> u16 {
+        self.inner[addr as usize] = (value & 0xff) as u8;
+        self.inner[(addr + 1) as usize] = (value >> 8) as u8;
+
+        value
     }
 
-    /// Get CPU Memory span
-    pub fn cpu_span(&mut self) -> &mut [u8] {
-        &mut self.inner[0x0000..=0x2000]
+    pub fn bulk_write(&mut self, addr: u16, bulk: &[u8]) -> u16 {
+        let len = bulk.len() as u16;
+        self.inner[addr as usize .. (addr + len) as usize]
+            .copy_from_slice(bulk);
+
+        len
     }
 
     pub fn new() -> Self {

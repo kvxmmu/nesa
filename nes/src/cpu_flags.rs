@@ -4,6 +4,23 @@ pub enum Bit {
     Zero = 0,
 }
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub enum Addressing {
+    Immediate,
+
+    ZeroPage,
+    ZeroPageX,
+    ZeroPageY,
+
+    Absolute,
+    AbsoluteX,
+    AbsoluteY,
+    
+    Indirect,
+    IndirectX,
+    IndirectY,
+}
+
 pub struct CpuFlags {
     inner: u8,
 }

@@ -58,4 +58,10 @@ impl CpuRegisters {
     pub fn zero_counter(&mut self) {
         self.program_counter = 0;
     }
+
+    pub fn reset(&mut self) {
+        self.zero_indexes();
+        self.zero_accumulator();
+        self.zero_stack();
+    }
 }
