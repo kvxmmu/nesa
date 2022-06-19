@@ -5,7 +5,28 @@ use {
     }
 };
 
-pub static OPCODES: [Opcode; 11] = [
+pub static OPCODES: [Opcode; 24] = [
+    // STA
+    Opcode::new(0x85, 1, OpcodeType::Sta, AddressingMode::ZeroPage),
+    Opcode::new(0x95, 1, OpcodeType::Sta, AddressingMode::ZeroPageX),
+
+    Opcode::new(0x8D, 2, OpcodeType::Sta, AddressingMode::Absolute),
+    Opcode::new(0x9D, 2, OpcodeType::Sta, AddressingMode::AbsoluteX),
+    Opcode::new(0x99, 2, OpcodeType::Sta, AddressingMode::AbsoluteY),
+
+    Opcode::new(0x81, 1, OpcodeType::Sta, AddressingMode::IndirectX),
+    Opcode::new(0x91, 1, OpcodeType::Sta, AddressingMode::IndirectY),
+
+    // STX
+    Opcode::new(0x86, 1, OpcodeType::Stx, AddressingMode::ZeroPage),
+    Opcode::new(0x96, 1, OpcodeType::Stx, AddressingMode::ZeroPageY),
+    Opcode::new(0x8E, 2, OpcodeType::Stx, AddressingMode::Absolute),
+
+    // STX
+    Opcode::new(0x84, 1, OpcodeType::Sty, AddressingMode::ZeroPage),
+    Opcode::new(0x94, 1, OpcodeType::Sty, AddressingMode::ZeroPageY),
+    Opcode::new(0x8C, 2, OpcodeType::Sty, AddressingMode::Absolute),
+
     // LDA
     Opcode::new(0xA9, 1, OpcodeType::Lda, AddressingMode::Immediate),
 

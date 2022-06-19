@@ -6,6 +6,39 @@ use {
 };
 
 #[test]
+fn stx() {
+    let mut cpu = NesCpu::new();
+
+    cpu.interpret([
+        0xE8, 0xE8, 0x86, 0x0F, 0x00
+    ]);
+
+    assert_eq!(cpu.mem.read(0x0F), 0x02);
+}
+
+#[test]
+fn sty() {
+    let mut cpu = NesCpu::new();
+
+    cpu.interpret([
+        0xC8, 0xC8, 0x84, 0xAF, 0x00,
+    ]);
+
+    assert_eq!(cpu.mem.read(0xAF), 0x02);
+}
+
+#[test]
+fn sta() {
+    let mut cpu = NesCpu::new();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0x85, 0xFE, 0x00
+    ]);
+
+    assert_eq!(cpu.mem.read(0xFE), 0xFF);
+}
+
+#[test]
 fn lda_abs_x() {
     let mut cpu = NesCpu::new();
 

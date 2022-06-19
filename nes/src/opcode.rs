@@ -15,6 +15,15 @@ pub enum OpcodeType {
 
     /// Stop execution
     Brk,
+
+    /// Store accumulator at memory location
+    Sta,
+
+    /// Store X at memory location
+    Stx,
+
+    /// Store Y at memory location
+    Sty,
 }
 
 #[derive(Debug, Clone)]

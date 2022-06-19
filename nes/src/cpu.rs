@@ -17,6 +17,30 @@ pub struct NesCpu {
 }
 
 impl NesCpu {
+    pub fn stx(
+        &mut self,
+        mode: AddressingMode
+    ) {
+        let addr = self.translate_addr(mode);
+        self.mem.write(addr, self.regs.x);
+    }
+
+    pub fn sty(
+        &mut self,
+        mode: AddressingMode
+    ) {
+        let addr = self.translate_addr(mode);
+        self.mem.write(addr, self.regs.y);
+    }
+
+    pub fn sta(
+        &mut self,
+        mode: AddressingMode
+    ) {
+        let addr = self.translate_addr(mode);
+        self.mem.write(addr, self.regs.acc);
+    }
+
     pub fn lda(
         &mut self,
         mode: AddressingMode,
@@ -112,6 +136,10 @@ impl NesCpu {
 
             OpcodeType::Inx => { self.inx(); }
             OpcodeType::Iny => { self.iny(); }
+
+            OpcodeType::Sta => { self.sta(opcode.mode); }
+            OpcodeType::Stx => { self.stx(opcode.mode); }
+            OpcodeType::Sty => { self.sty(opcode.mode); }
 
             OpcodeType::Brk => return Err(()),
             _ => panic!("Unhandled opcode: {:#?}", opcode)
