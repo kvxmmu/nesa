@@ -1,67 +1,38 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CpuRegisters {
-    pub program_counter: u16,
-    pub stack_pointer: u8,
-    pub accumulator: u8,
-    pub index_x: u8,
-    pub index_y: u8,
+    pub pc: u16,
+    pub sp: u8,
+
+    pub x: u8,
+    pub y: u8,
+
+    pub acc: u8,
 }
 
-impl CpuRegisters {
-    pub fn add_sp(&mut self, value: u8) -> u8 {
-        self.stack_pointer += value;
-        self.stack_pointer
+impl CpuRegisters {    
+    pub fn add_pc(&mut self, value: u16) -> &mut Self {
+        self.pc += value;
+        self
     }
 
-    pub fn add_pc(&mut self, value: u16) -> u16 {
-        self.program_counter += value;
-        self.program_counter
+    pub fn add_sp(&mut self, value: u8) -> &mut Self {
+        self.sp += value;
+        self
     }
 
-    pub fn inc_pc(&mut self) -> u16 {
+    pub fn inc_pc(&mut self) -> &mut Self {
         self.add_pc(1)
     }
 
-    pub fn inc_sp(&mut self) -> u8 {
+    pub fn inc_sp(&mut self) -> &mut Self {
         self.add_sp(1)
     }
 
     pub fn new() -> Self {
-        Self { program_counter: 0
-             , stack_pointer: 0
-             , accumulator: 0
-             , index_x: 0
-             , index_y: 0 }
-    }
-
-    pub fn zero_stack(&mut self) {
-        self.stack_pointer = 0;
-    }
-
-    pub fn zero_accumulator(&mut self) {
-        self.accumulator = 0;
-    }
-
-    pub fn zero_index_x(&mut self) {
-        self.index_x = 0;
-    }
-
-    pub fn zero_index_y(&mut self) {
-        self.index_y = 0;
-    }
-
-    pub fn zero_indexes(&mut self) {
-        self.zero_index_x();
-        self.zero_index_y();
-    }
-
-    pub fn zero_counter(&mut self) {
-        self.program_counter = 0;
-    }
-
-    pub fn reset(&mut self) {
-        self.zero_indexes();
-        self.zero_accumulator();
-        self.zero_stack();
+        Self { pc: 0
+             , sp: 0
+             , x: 0
+             , y: 0
+             , acc: 0 }
     }
 }
