@@ -6,6 +6,28 @@ use {
 };
 
 #[test]
+fn tax() {
+    let mut cpu = NesCpu::new();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0xAA, 0x00
+    ]);
+
+    assert_eq!(cpu.regs.x, 0xFF);
+}
+
+#[test]
+fn tay() {
+    let mut cpu = NesCpu::new();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0xA8, 0x00
+    ]);
+
+    assert_eq!(cpu.regs.y, 0xFF);
+}
+
+#[test]
 fn stx() {
     let mut cpu = NesCpu::new();
 

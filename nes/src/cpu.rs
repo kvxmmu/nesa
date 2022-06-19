@@ -17,6 +17,20 @@ pub struct NesCpu {
 }
 
 impl NesCpu {
+    pub fn tax(
+        &mut self
+    ) {
+        self.regs.x = self.regs.acc;
+        self.check_zero_neg(self.regs.x);
+    }
+
+    pub fn tay(
+        &mut self
+    ) {
+        self.regs.y = self.regs.acc;
+        self.check_zero_neg(self.regs.x);
+    }
+
     pub fn stx(
         &mut self,
         mode: AddressingMode
@@ -140,6 +154,9 @@ impl NesCpu {
             OpcodeType::Sta => { self.sta(opcode.mode); }
             OpcodeType::Stx => { self.stx(opcode.mode); }
             OpcodeType::Sty => { self.sty(opcode.mode); }
+
+            OpcodeType::Tax => { self.tax(); }
+            OpcodeType::Tay => { self.tay(); }
 
             OpcodeType::Brk => return Err(()),
             _ => panic!("Unhandled opcode: {:#?}", opcode)

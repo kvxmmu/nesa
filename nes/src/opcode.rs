@@ -24,6 +24,12 @@ pub enum OpcodeType {
 
     /// Store Y at memory location
     Sty,
+
+    /// Copy accumulator to the X
+    Tax,
+    
+    /// Copy accumulator to the Y
+    Tay,
 }
 
 #[derive(Debug, Clone)]

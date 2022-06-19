@@ -5,7 +5,13 @@ use {
     }
 };
 
-pub static OPCODES: [Opcode; 24] = [
+pub static OPCODES: [Opcode; 26] = [
+    // TAX
+    Opcode::zero_offset(0xAA, OpcodeType::Tax),
+
+    // TAY
+    Opcode::zero_offset(0xA8, OpcodeType::Tay),
+
     // STA
     Opcode::new(0x85, 1, OpcodeType::Sta, AddressingMode::ZeroPage),
     Opcode::new(0x95, 1, OpcodeType::Sta, AddressingMode::ZeroPageX),
