@@ -15,6 +15,16 @@ impl CpuRegisters {
         self
     }
 
+    pub fn add_x(&mut self, value: u8) -> &mut Self {
+        self.x = self.x.wrapping_add(value);
+        self
+    }
+
+    pub fn add_y(&mut self, value: u8) -> &mut Self {
+        self.y = self.y.wrapping_add(value);
+        self
+    }
+
     pub fn add_sp(&mut self, value: u8) -> &mut Self {
         self.sp += value;
         self

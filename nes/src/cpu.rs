@@ -28,6 +28,20 @@ impl NesCpu {
         self.check_zero_neg(value);
     }
 
+    pub fn inx(
+        &mut self,
+    ) {
+        self.regs.add_x(1);
+        self.check_zero_neg(self.regs.x);
+    }
+
+    pub fn iny(
+        &mut self
+    ) {
+        self.regs.add_y(1);
+        self.check_zero_neg(self.regs.y);
+    }
+
     fn check_zero_neg(&mut self, value: u8) {
         self.status.turn(CpuStatus::ZERO, || value == 0);
         self.status.turn(CpuStatus::NEGATIVE, || (value & (1 << 7)) != 0);
@@ -95,6 +109,9 @@ impl NesCpu {
     ) -> Result<(), ()> {
         match opcode.opcode {
             OpcodeType::Lda => { self.lda(opcode.mode); }
+
+            OpcodeType::Inx => { self.inx(); }
+            OpcodeType::Iny => { self.iny(); }
 
             OpcodeType::Brk => return Err(()),
             _ => panic!("Unhandled opcode: {:#?}", opcode)
