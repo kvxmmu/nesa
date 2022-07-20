@@ -19,6 +19,9 @@ pub enum InitializeState {
 pub enum Opcode {
     Uninitialized,
     Brk,
+
+    Inx,
+    Iny,
     Lda(AddrMode, Word),
 }
 
@@ -32,7 +35,28 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
 
 unsafe fn init() {
     OPCODES[0x00] = Opcode::Brk;
+
+    // INX
+
+    OPCODES[0xE8] = Opcode::Inx;
+
+    // INY
+
+    OPCODES[0xC8] = Opcode::Iny;
+
+    // LDA
+
     OPCODES[0xA9] = Opcode::Lda(AddrMode::Immediate, 1);
+
+    OPCODES[0xA5] = Opcode::Lda(AddrMode::ZeroPage, 1);
+    OPCODES[0xB5] = Opcode::Lda(AddrMode::ZeroPageX, 1);
+    
+    OPCODES[0xAD] = Opcode::Lda(AddrMode::Absolute, 2);
+    OPCODES[0xBD] = Opcode::Lda(AddrMode::AbsoluteX, 2);
+    OPCODES[0xB9] = Opcode::Lda(AddrMode::AbsoluteY, 2);
+
+    OPCODES[0xA1] = Opcode::Lda(AddrMode::IndirectX, 1);
+    OPCODES[0xB1] = Opcode::Lda(AddrMode::IndirectY, 1);
 }
 
 pub fn try_init() -> InitializeState {

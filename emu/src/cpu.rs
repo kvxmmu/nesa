@@ -26,7 +26,20 @@ pub struct Cpu {
 }
 
 impl Cpu {
-    #[inline(always)]
+    pub fn inx(
+        &mut self,
+    ) {
+        self.inc_x();
+        self.chk_zero_neg_b(self.x);
+    }
+
+    pub fn iny(
+        &mut self
+    ) {
+        self.inc_y();
+        self.chk_zero_neg_b(self.y);
+    }
+
     pub fn lda(
         &mut self,
         mode: AddrMode
@@ -46,6 +59,9 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
+            Opcode::Inx => self.inx(),
+            Opcode::Iny => self.iny(),
+
             Opcode::Lda(mode, length) => {
                 self.lda(mode);
                 self.add_pc(length);
@@ -81,9 +97,7 @@ impl Cpu {
 
     #[inline(always)]
     pub fn next(&mut self) -> Opcode {
-        dbg!(self.pc);
         let opcode = self.mem.read(self.pc);
-        dbg!(opcode);
         self.inc_pc();
 
         lookup_opcode(opcode)
@@ -150,6 +164,26 @@ impl Cpu {
     #[inline(always)]
     pub fn inc_pc(&mut self) {
         self.add_pc(1);
+    }
+
+    #[inline(always)]
+    pub fn inc_x(&mut self) {
+        self.add_x(1);
+    }
+
+    #[inline(always)]
+    pub fn inc_y(&mut self) {
+        self.add_y(1);
+    }
+
+    #[inline(always)]
+    pub fn add_x(&mut self, x: Byte) {
+        self.x = self.x.wrapping_add(x);
+    }
+
+    #[inline(always)]
+    pub fn add_y(&mut self, y: Byte) {
+        self.y = self.y.wrapping_add(y);
     }
 
     #[inline(always)]
