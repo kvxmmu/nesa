@@ -26,7 +26,7 @@ pub enum Opcode {
     Tax,
     Tay,
 
-    Bcc,
+    Bcs,
 
     Asl(AddrMode, Word),
 
@@ -54,7 +54,7 @@ unsafe fn init() {
 
     // BCC
     
-    OPCODES[0x90] = Opcode::Bcc;
+    OPCODES[0xB0] = Opcode::Bcs;
 
     // ASL
 

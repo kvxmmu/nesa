@@ -151,7 +151,7 @@ impl Cpu {
         self.chk_zero_neg_b(target);
     }
 
-    pub fn bcc(
+    pub fn bcs(
         &mut self,
         relative_addr: Signed,
     ) {
@@ -169,10 +169,10 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
-            Opcode::Bcc => {
+            Opcode::Bcs => {
                 let relative = self.translate_relative();
                 self.add_pc(1);
-                self.bcc(relative);
+                self.bcs(relative);
             },
 
             Opcode::Tax => self.tax(),

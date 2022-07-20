@@ -8,13 +8,13 @@ use {
 // BCC
 
 #[test]
-fn bcc_positive() {
+fn bcs_positive() {
     let mut cpu = Cpu::default();
 
     cpu.interpret([
         0xA9, 0xFF,  // lda 0xFF (imm)
         0x69, 0x02,  // adc 0x02 (imm)
-        0x90, 0x02,  // bcc 0x02
+        0xB0, 0x02,  // bcc 0x02
         0xA9, 0x00,  // lda 0x00 (imm)
         0x00,        // brk
     ]);
@@ -23,19 +23,19 @@ fn bcc_positive() {
 }
 
 #[test]
-fn bcc_negative() {
+fn bcs_negative() {
     let mut cpu = Cpu::default();
 
     cpu.interpret([
         0xA9, 0xFF,  // lda 0xFF (imm)
         0x69, 0x02,  // adc 0x02 (imm)
 
-        0x90, 0x03,  // bcc 0x01
+        0xB0, 0x03,  // bcc 0x01
         0xA9, 0x55,  // lda 0x55 (imm)
         0x00,        // brk
 
         0xA9, 0x50,  // lda 0x50 (imm)
-        0x90, 0xF9,  // bcc 0xF9 (-7)
+        0xB0, 0xF9,  // bcc 0xF9 (-7)
 
         0x00,        // brk
     ]);
