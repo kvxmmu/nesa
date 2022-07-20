@@ -28,6 +28,7 @@ pub enum Opcode {
 
     Bcs,
     Bcc,
+    Beq,
 
     Asl(AddrMode, Word),
 
@@ -50,8 +51,12 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
     unsafe { OPCODES[code as usize] }
 }
 
-unsafe fn init() {
+unsafe fn init() {    
     OPCODES[0x00] = Opcode::Brk;
+
+    // BEQ
+
+    OPCODES[0xF0] = Opcode::Beq;
 
     // BCC
 

@@ -168,6 +168,15 @@ impl Cpu {
             self.add_pc_signed(relative_addr as SignedWord);
         }
     }
+
+    pub fn beq(
+        &mut self,
+        relative_addr: Signed
+    ) {
+        if self.status.fetch(CpuStatus::ZERO) {
+            self.add_pc_signed(relative_addr as SignedWord);
+        }
+    }
 }
 
 impl Cpu {
@@ -177,6 +186,11 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
+            Opcode::Beq => {
+                let relative = self.translate_relative();
+                self.add_pc(1);
+                self.beq(relative);
+            }
             Opcode::Bcc => {
                 let relative = self.translate_relative();
                 self.add_pc(1);

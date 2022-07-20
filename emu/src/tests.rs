@@ -5,6 +5,40 @@ use {
     }
 };
 
+// BEQ
+
+#[test]
+fn beq_negative() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x00,  // lda 0x00 (imm)
+
+        0xF0, 0x03,  // beq 0x03
+        0xA9, 0x01,  // lda 0x01 (imm)
+        0x00,        // brk
+
+        0xF0, 0xFB,  // beq 0xFB (-5)
+
+        0x00,        // brk
+    ]);
+}
+
+#[test]
+fn beq_positive() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x00,  // lda 0x00 (imm)
+                     // this used to set zero flag to 1
+        
+        0xF0, 0x02,  // beq 0x02
+        0xA9, 0x01,  // lda 0x01 (imm)
+        
+        0x00,        // brk
+    ]);
+
+    assert_eq!(cpu.acc, 0x00);
+}
+
 // BCC
 
 #[test]
