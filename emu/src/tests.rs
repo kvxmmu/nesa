@@ -5,6 +5,22 @@ use {
     }
 };
 
+// LDA
+
+#[test]
+fn lda_abs_neg_zero() {
+    let mut cpu = Cpu::default();
+    cpu.mem.write(0xAFF, 0xFF);
+
+    cpu.interpret([
+        0xAD, 0xFF, 0x0A, 0x00
+    ]);
+
+    assert_eq!(cpu.acc, 0xFF);
+    assert_eq!(cpu.status.fetch(CpuStatus::ZERO), false);
+    assert_eq!(cpu.status.fetch(CpuStatus::NEGATIVE), true);
+}
+
 #[test]
 fn lda_indirect() {
     let mut cpu = Cpu::default();
