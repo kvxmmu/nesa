@@ -267,7 +267,7 @@ impl Cpu {
             AddrMode::Indirect  => self.mem.read_word(self.mem.read_word(self.pc)),
             
             AddrMode::IndirectX => self.mem.read_word((self.mem.read(self.pc) as Word).wrapping_add(self.x as Word)),
-            AddrMode::IndirectY => self.mem.read_word(self.pc).wrapping_add(self.y as Word),
+            AddrMode::IndirectY => self.mem.read_word(self.mem.read(self.pc) as Word).wrapping_add(self.y as Word),
         }
     }
 }
