@@ -8,6 +8,45 @@ use {
 // BCC
 
 #[test]
+fn bcc_negative() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x01,  // lda 0x01 (imm)
+        0x69, 0x00,  // adc 0x00 (imm)
+
+        0x90, 0x03,  // bcc 0x03
+        0xA9, 0x02,  // lda 0x02 (imm)
+        0x00,        // brk
+
+        0x90, 0xFB,  // bcc 0xFB (-5)
+
+        0x00,        // brk
+    ]);
+
+    assert_eq!(cpu.acc, 0x02);
+}
+
+#[test]
+
+fn bcc_positive() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x01,  // lda 0x00 (imm)
+        0x69, 0x00,  // adc 0x00 (imm)
+
+        0x90, 0x02,  // bcc 0x02
+        0xA9, 0x02,  // lda 0x02 (imm)
+
+        0x00,        // brk
+    ]);
+
+    assert_eq!(cpu.status.fetch(CpuStatus::CARRY), false);
+    assert_eq!(cpu.acc, 0x01);
+}
+
+// BCS
+
+#[test]
 fn bcs_positive() {
     let mut cpu = Cpu::default();
 

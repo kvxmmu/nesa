@@ -155,8 +155,16 @@ impl Cpu {
         &mut self,
         relative_addr: Signed,
     ) {
-        dbg!(relative_addr);
         if self.status.fetch(CpuStatus::CARRY) {
+            self.add_pc_signed(relative_addr as SignedWord);
+        }
+    }
+
+    pub fn bcc(
+        &mut self,
+        relative_addr: Signed
+    ) {
+        if !self.status.fetch(CpuStatus::CARRY) {
             self.add_pc_signed(relative_addr as SignedWord);
         }
     }
@@ -169,11 +177,16 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
+            Opcode::Bcc => {
+                let relative = self.translate_relative();
+                self.add_pc(1);
+                self.bcc(relative);
+            }
             Opcode::Bcs => {
                 let relative = self.translate_relative();
                 self.add_pc(1);
                 self.bcs(relative);
-            },
+            }
 
             Opcode::Tax => self.tax(),
             Opcode::Tay => self.tay(),
