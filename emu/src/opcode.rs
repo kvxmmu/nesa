@@ -26,6 +26,8 @@ pub enum Opcode {
     Tax,
     Tay,
 
+    Bcc,
+
     Asl(AddrMode, Word),
 
     And(AddrMode, Word),
@@ -40,7 +42,7 @@ pub enum Opcode {
 }
 
 static __INITIALIZED: AtomicBool = AtomicBool::new(false);
-static mut OPCODES: [Opcode; 0xff] = [Opcode::Uninitialized; 0xff];
+static mut OPCODES: [Opcode; 256] = [Opcode::Uninitialized; 256];
 
 #[inline(always)]
 pub fn lookup_opcode(code: Byte) -> Opcode {
@@ -49,6 +51,10 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
 
 unsafe fn init() {
     OPCODES[0x00] = Opcode::Brk;
+
+    // BCC
+    
+    OPCODES[0x90] = Opcode::Bcc;
 
     // ASL
 

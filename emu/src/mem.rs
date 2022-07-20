@@ -1,6 +1,7 @@
-pub type Byte  = u8;
-pub type Word  = u16;
-pub type DWord = u16;
+pub type Byte       = u8;
+pub type Signed     = i8;
+pub type Word       = u16;
+pub type SignedWord = i16;
 
 pub struct Memory {
     inner: Vec<Byte>
@@ -41,6 +42,11 @@ impl Memory {
     #[inline(always)]
     pub fn read(&self, addr: Word) -> Byte {
         self.inner[addr as usize]
+    }
+
+    #[inline(always)]
+    pub fn read_signed(&self, addr: Word) -> Signed {
+        self.inner[addr as usize] as Signed
     }
 
     #[inline(always)]

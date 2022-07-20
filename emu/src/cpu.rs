@@ -147,8 +147,18 @@ impl Cpu {
         } else {
             self.status.set_off(CpuStatus::CARRY);
         }
-        
+
         self.chk_zero_neg_b(target);
+    }
+
+    pub fn bcc(
+        &mut self,
+        relative_addr: Signed,
+    ) {
+        dbg!(relative_addr);
+        if self.status.fetch(CpuStatus::CARRY) {
+            self.add_pc_signed(relative_addr as SignedWord);
+        }
     }
 }
 
@@ -159,6 +169,12 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
+            Opcode::Bcc => {
+                let relative = self.translate_relative();
+                self.add_pc(1);
+                self.bcc(relative);
+            },
+
             Opcode::Tax => self.tax(),
             Opcode::Tay => self.tay(),
 
@@ -249,7 +265,13 @@ impl Cpu {
         code: T,
     ) {
         if let Some(error) = self.try_interpret(code) {
-            panic!("Interpret error: {:#?}", error);
+            panic!(
+                "Interpret error: {:#?} (pc = 0x{:x}, from begin pc = {}, insn = 0x{:x})",
+                error,
+                self.pc,
+                self.pc - ROM_ENTRYPOINT,
+                self.mem.read(self.pc - 1)
+            );
         }
     }
 
@@ -317,6 +339,15 @@ impl Cpu {
     #[inline(always)]
     pub fn add_y(&mut self, y: Byte) {
         self.y = self.y.wrapping_add(y);
+    }
+
+    #[inline(always)]
+    pub fn add_pc_signed(&mut self, off: SignedWord) {
+        if off < 0 {
+            self.pc = self.pc.wrapping_sub(off.abs() as Word);
+        } else {
+            self.add_pc(off as Word);
+        }
     }
 
     #[inline(always)]
@@ -389,6 +420,14 @@ impl Cpu {
 }
 
 impl Cpu {
+    #[inline(always)]
+    pub fn translate_relative(
+        &self
+    ) -> Signed {
+        self.mem.read_signed(self.pc)
+    }
+
+    #[inline(always)]
     pub fn translate(
         &self,
         mode: AddrMode
