@@ -5,6 +5,26 @@ use {
     }
 };
 
+// ADC
+
+#[test]
+fn adc_imm() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x1,   // lda 0x1 (imm)
+        0x69, 0xFF,  // adc 0xFF (imm)
+        
+        // Now accumulator should be zero
+        // and carry flag is on, let's check
+
+        0x69, 0x1,   // adc 0x1 (imm)
+
+        0x00,        // brk
+    ]);
+
+    assert_eq!(cpu.acc, 0x2);
+}
+
 // TAX & TAY
 
 #[test]

@@ -30,6 +30,8 @@ pub enum Opcode {
     Sty(AddrMode, Word),
     Sta(AddrMode, Word),
 
+    Adc(AddrMode, Word),
+
     Lda(AddrMode, Word),
 }
 
@@ -43,6 +45,20 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
 
 unsafe fn init() {
     OPCODES[0x00] = Opcode::Brk;
+
+    // ADC
+
+    OPCODES[0x69] = Opcode::Adc(AddrMode::Immediate, 1);
+
+    OPCODES[0x65] = Opcode::Adc(AddrMode::ZeroPage, 1);
+    OPCODES[0x75] = Opcode::Adc(AddrMode::ZeroPageX, 1);
+    
+    OPCODES[0x6D] = Opcode::Adc(AddrMode::Absolute, 2);
+    OPCODES[0x7D] = Opcode::Adc(AddrMode::AbsoluteX, 2);
+    OPCODES[0x79] = Opcode::Adc(AddrMode::AbsoluteY, 2);
+
+    OPCODES[0x61] = Opcode::Adc(AddrMode::IndirectX, 1);
+    OPCODES[0x71] = Opcode::Adc(AddrMode::IndirectY, 1);
 
     // STA
     OPCODES[0x85] = Opcode::Sta(AddrMode::ZeroPage, 1);

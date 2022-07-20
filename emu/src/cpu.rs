@@ -88,6 +88,28 @@ impl Cpu {
         let target = self.translate(mode);
         self.mem.write(target, self.acc);
     }
+
+    pub fn adc(
+        &mut self,
+        mode: AddrMode
+    ) {
+        let contents = self.mem.read(self.translate(mode)) as Word;
+        let acc = self.acc as u16;
+        let carry = self.status.fetch(CpuStatus::CARRY) as Word;
+
+        let (am, overflow1) = contents.overflowing_add(acc);
+        let (amc, overflow2) = am.overflowing_add(carry);
+
+        if (amc & CARRY_MASK) == CARRY_MASK {
+            self.status.set_on(CpuStatus::CARRY);
+        } else {
+            self.status.set_off(CpuStatus::CARRY);
+        }
+
+        self.acc = amc as u8;
+        self.set_overflow(overflow1 || overflow2);
+        self.chk_zero_neg_b(self.acc);
+    }
 }
 
 impl Cpu {
@@ -99,6 +121,11 @@ impl Cpu {
         match opcode {
             Opcode::Tax => self.tax(),
             Opcode::Tay => self.tay(),
+
+            Opcode::Adc(mode, length) => {
+                self.adc(mode);
+                self.add_pc(length);
+            }
 
             Opcode::Sta(mode, length) => {
                 self.sta(mode);
@@ -253,6 +280,15 @@ impl Cpu {
         value: Byte
     ) {
         self.chk_zero_neg(value, NEG_MASK);
+    }
+
+    #[inline(always)]
+    pub fn set_overflow(&mut self, to: bool) {
+        if to {
+            self.status.set_on(CpuStatus::OVERFLOW);
+        } else {
+            self.status.set_off(CpuStatus::OVERFLOW);
+        }
     }
 
     #[inline(always)]
