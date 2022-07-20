@@ -22,6 +22,14 @@ pub enum Opcode {
 
     Inx,
     Iny,
+
+    Tax,
+    Tay,
+
+    Stx(AddrMode, Word),
+    Sty(AddrMode, Word),
+    Sta(AddrMode, Word),
+
     Lda(AddrMode, Word),
 }
 
@@ -36,16 +44,40 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
 unsafe fn init() {
     OPCODES[0x00] = Opcode::Brk;
 
-    // INX
+    // STA
+    OPCODES[0x85] = Opcode::Sta(AddrMode::ZeroPage, 1);
+    OPCODES[0x95] = Opcode::Sta(AddrMode::ZeroPageX, 1);
 
+    OPCODES[0x8D] = Opcode::Sta(AddrMode::Absolute, 2);
+    OPCODES[0x9D] = Opcode::Sta(AddrMode::AbsoluteX, 2);
+    OPCODES[0x99] = Opcode::Sta(AddrMode::AbsoluteY, 2);
+    
+    OPCODES[0x81] = Opcode::Sta(AddrMode::IndirectX, 1);
+    OPCODES[0x91] = Opcode::Sta(AddrMode::IndirectY, 1);
+
+    // STY
+    OPCODES[0x84] = Opcode::Sty(AddrMode::ZeroPage, 1);
+    OPCODES[0x94] = Opcode::Sty(AddrMode::ZeroPageY, 1);
+    OPCODES[0x8C] = Opcode::Sty(AddrMode::Absolute, 2);
+
+    // STX
+    OPCODES[0x86] = Opcode::Stx(AddrMode::ZeroPage, 1);
+    OPCODES[0x96] = Opcode::Stx(AddrMode::ZeroPageY, 1);
+    OPCODES[0x8E] = Opcode::Stx(AddrMode::Absolute, 2);
+
+    // TAX
+    OPCODES[0xAA] = Opcode::Tax;
+
+    // TAY
+    OPCODES[0xA8] = Opcode::Tay;
+
+    // INX
     OPCODES[0xE8] = Opcode::Inx;
 
     // INY
-
     OPCODES[0xC8] = Opcode::Iny;
 
     // LDA
-
     OPCODES[0xA9] = Opcode::Lda(AddrMode::Immediate, 1);
 
     OPCODES[0xA5] = Opcode::Lda(AddrMode::ZeroPage, 1);

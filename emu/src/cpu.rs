@@ -33,6 +33,20 @@ impl Cpu {
         self.chk_zero_neg_b(self.x);
     }
 
+    pub fn tax(
+        &mut self,
+    ) {
+        self.x = self.acc;
+        self.chk_zero_neg_b(self.x);
+    }
+
+    pub fn tay(
+        &mut self
+    ) {
+        self.y = self.acc;
+        self.chk_zero_neg_b(self.y);
+    }
+
     pub fn iny(
         &mut self
     ) {
@@ -50,6 +64,30 @@ impl Cpu {
         self.acc = data;
         self.chk_zero_neg_b(data);
     }
+
+    pub fn stx(
+        &mut self,
+        mode: AddrMode
+    ) {
+        let target = self.translate(mode);
+        self.mem.write(target, self.x);
+    }
+
+    pub fn sty(
+        &mut self,
+        mode: AddrMode
+    ) {
+        let target = self.translate(mode);
+        self.mem.write(target, self.y);
+    }
+
+    pub fn sta(
+        &mut self,
+        mode: AddrMode,
+    ) {
+        let target = self.translate(mode);
+        self.mem.write(target, self.acc);
+    }
 }
 
 impl Cpu {
@@ -59,8 +97,26 @@ impl Cpu {
         opcode: Opcode
     ) -> Result<ExecStatus, ExecError> {
         match opcode {
+            Opcode::Tax => self.tax(),
+            Opcode::Tay => self.tay(),
+
+            Opcode::Sta(mode, length) => {
+                self.sta(mode);
+                self.add_pc(length);
+            }
+
             Opcode::Inx => self.inx(),
             Opcode::Iny => self.iny(),
+
+            Opcode::Stx(mode, length) => {
+                self.stx(mode);
+                self.add_pc(length);
+            }
+
+            Opcode::Sty(mode, length) => {
+                self.sty(mode);
+                self.add_pc(length);
+            }
 
             Opcode::Lda(mode, length) => {
                 self.lda(mode);

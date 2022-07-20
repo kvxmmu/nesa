@@ -5,6 +5,67 @@ use {
     }
 };
 
+// TAX & TAY
+
+#[test]
+fn tax() {
+    let mut cpu = Cpu::default();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0xAA, 0x00
+    ]);
+
+    assert_eq!(cpu.x, 0xFF);
+}
+
+#[test]
+fn tay() {
+    let mut cpu = Cpu::default();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0xA8, 0x00
+    ]);
+
+    assert_eq!(cpu.y, 0xFF);
+}
+
+// STY & STX
+
+#[test]
+fn stx() {
+    let mut cpu = Cpu::default();
+
+    cpu.interpret([
+        0xE8, 0xE8, 0x86, 0x0F, 0x00
+    ]);
+
+    assert_eq!(cpu.mem.read(0x0F), 0x02);
+}
+
+#[test]
+fn sty() {
+    let mut cpu = Cpu::default();
+
+    cpu.interpret([
+        0xC8, 0xC8, 0x84, 0xAF, 0x00,
+    ]);
+
+    assert_eq!(cpu.mem.read(0xAF), 0x02);
+}
+
+// STA
+
+#[test]
+fn sta() {
+    let mut cpu = Cpu::default();
+
+    cpu.interpret([
+        0xA9, 0xFF, 0x85, 0xFE, 0x00
+    ]);
+
+    assert_eq!(cpu.mem.read(0xFE), 0xFF);
+}
+
 // LDA
 
 #[test]
