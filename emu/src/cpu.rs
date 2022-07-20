@@ -110,6 +110,46 @@ impl Cpu {
         self.set_overflow(overflow1 || overflow2);
         self.chk_zero_neg_b(self.acc);
     }
+
+    pub fn and(
+        &mut self,
+        mode: AddrMode
+    ) {
+        let data = self.mem.read(self.translate(mode));
+        self.acc &= data;
+
+        self.chk_zero_neg_b(self.acc);
+    }
+
+    pub fn asl(
+        &mut self,
+        mode: AddrMode
+    ) {
+        let target;
+        let carry;
+        if mode == AddrMode::Accumulator {
+            carry = (self.acc & (1 << 7)) != 0;
+            target = self.acc.wrapping_shl(1);
+
+            self.acc = target;
+        } else {
+            let address = self.translate(mode);
+            let data = self.mem.read(address);
+
+            carry = (data & (1 << 7)) != 0;
+            target = data.wrapping_shl(1);
+
+            self.mem.write(address, target);
+        }
+
+        if carry {
+            self.status.set_on(CpuStatus::CARRY);
+        } else {
+            self.status.set_off(CpuStatus::CARRY);
+        }
+        
+        self.chk_zero_neg_b(target);
+    }
 }
 
 impl Cpu {
@@ -121,6 +161,16 @@ impl Cpu {
         match opcode {
             Opcode::Tax => self.tax(),
             Opcode::Tay => self.tay(),
+
+            Opcode::Asl(mode, length) => {
+                self.asl(mode);
+                self.add_pc(length);
+            }
+
+            Opcode::And(mode, length) => {
+                self.and(mode);
+                self.add_pc(length);
+            }
 
             Opcode::Adc(mode, length) => {
                 self.adc(mode);
@@ -344,6 +394,7 @@ impl Cpu {
         mode: AddrMode
     ) -> Word {
         match mode {
+            AddrMode::Accumulator => unreachable!(),
             AddrMode::Relative => self.mem.read(self.pc) as Word,
             AddrMode::Immediate => self.pc,
             AddrMode::ZeroPage  => self.mem.read(self.pc) as Word,

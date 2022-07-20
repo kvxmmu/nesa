@@ -26,6 +26,10 @@ pub enum Opcode {
     Tax,
     Tay,
 
+    Asl(AddrMode, Word),
+
+    And(AddrMode, Word),
+
     Stx(AddrMode, Word),
     Sty(AddrMode, Word),
     Sta(AddrMode, Word),
@@ -45,6 +49,30 @@ pub fn lookup_opcode(code: Byte) -> Opcode {
 
 unsafe fn init() {
     OPCODES[0x00] = Opcode::Brk;
+
+    // ASL
+
+    OPCODES[0x0A] = Opcode::Asl(AddrMode::Accumulator, 0);
+
+    OPCODES[0x06] = Opcode::Asl(AddrMode::ZeroPage, 1);
+    OPCODES[0x16] = Opcode::Asl(AddrMode::ZeroPageX, 1);
+
+    OPCODES[0x0E] = Opcode::Asl(AddrMode::Absolute, 2);
+    OPCODES[0x1E] = Opcode::Asl(AddrMode::AbsoluteX, 2);
+
+    // AND
+
+    OPCODES[0x29] = Opcode::And(AddrMode::Immediate, 1);
+
+    OPCODES[0x25] = Opcode::And(AddrMode::ZeroPage, 1);
+    OPCODES[0x35] = Opcode::And(AddrMode::ZeroPageX, 1);
+
+    OPCODES[0x2D] = Opcode::And(AddrMode::Absolute, 2);
+    OPCODES[0x3D] = Opcode::And(AddrMode::AbsoluteX, 2);
+    OPCODES[0x39] = Opcode::And(AddrMode::AbsoluteY, 2);
+
+    OPCODES[0x21] = Opcode::And(AddrMode::IndirectX, 1);
+    OPCODES[0x31] = Opcode::And(AddrMode::IndirectY, 1);
 
     // ADC
 

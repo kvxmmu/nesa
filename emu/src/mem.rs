@@ -24,6 +24,8 @@ pub enum AddrMode {
 
     IndirectX,
     IndirectY,
+
+    Accumulator,
 }
 
 impl Memory {

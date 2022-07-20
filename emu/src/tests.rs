@@ -5,6 +5,47 @@ use {
     }
 };
 
+// ASL
+
+#[test]
+fn asl_zeropage() {
+    let mut cpu = Cpu::default();
+    
+    cpu.mem.write(0xFA, 0x5);
+    cpu.interpret([
+        0x06, 0xFA,  // asl 0xFA (zeropage)
+        0x00,
+    ]);
+
+    assert_eq!(cpu.mem.read(0xFA), 0xA);
+}
+
+#[test]
+fn asl_acc() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0x5, // lda 0x5 (imm) 
+        0x0A,      // asl
+        0x00,      // brk
+    ]);
+
+    assert_eq!(cpu.acc, 0xA);
+}
+
+// AND
+
+#[test]
+fn and_imm() {
+    let mut cpu = Cpu::default();
+    cpu.interpret([
+        0xA9, 0xAF,  // lda 0xAF (imm)
+        0x29, 0x0F,  // and 0x0F
+        0x00         // brk
+    ]);
+
+    assert_eq!(cpu.acc, 0xF);
+}
+
 // ADC
 
 #[test]
